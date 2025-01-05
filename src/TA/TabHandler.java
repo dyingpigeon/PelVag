@@ -2,15 +2,14 @@ package TA;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 
 public class TabHandler {
@@ -51,7 +50,7 @@ public class TabHandler {
         this.modelStok = new DefaultTableModel(headerStok, 0); // Inisialisasi model
         this.TFNama = new JTextField(15);
         this.TFNotlp = new JTextField(15);
-        this.TFAlamat = new JTextField(41);
+        this.TFAlamat = new JTextField(15);
         this.ekspedisiCombo = new JComboBox<>();
         this.songketCombo = new JComboBox<>();
         this.warnaCombo = new JComboBox<>();
@@ -283,14 +282,13 @@ public class TabHandler {
         boolean currentVisibility = inside.isVisible();
             
         outside.setVisible(false);
-        // panelSongket.setVisible(false);
         inside.setVisible(false);
         
         if (!currentVisibility) {
             inside.setVisible(true);
         } else {
             outside.setVisible(true);
-            // panelSongket.setVisible(true);
+            kosongkan();
         }
     
         panel.revalidate();
@@ -301,18 +299,39 @@ public class TabHandler {
         JPanel tab = new JPanel(new BorderLayout());
         JPanel panelPenerima = new JPanel(new GridBagLayout());
         panelPenerima.setBackground(Color.YELLOW);
-        panelPenerima.setLayout(new GridBagLayout());
         LayoutHelper gbcPenerima = new LayoutHelper();
 
+        JPanel row1 = new JPanel(new GridBagLayout());
+        LayoutHelper gbcrow1 = new LayoutHelper();
+        row1.setOpaque(false);
+
+        JPanel rowrow = new JPanel(new GridBagLayout());
+        rowrow.setPreferredSize(new Dimension(500, 200));
+        LayoutHelper gbcrowrow = new LayoutHelper();
+        rowrow.setOpaque(false);
+
+        JPanel row2 = new JPanel(new GridBagLayout());
+        LayoutHelper gbcrow2 = new LayoutHelper();
+        row2.setOpaque(false);
+
+        ImageIcon profil = new ImageIcon(TabHandler.class.getResource("/TA.Foto/Profile200.png"));
+
+        JLabel Labrow1 = new JLabel();
+        JLabel LabFoto = new JLabel(profil);
         JLabel LabNama = new JLabel("Nama: ");
         JLabel LabNotlp = new JLabel("Nomor Telepon: ");
         JLabel LabAlamat = new JLabel("Alamat: ");
         JLabel LabEkspedisi = new JLabel("Ekspedisi: ");
 
-        LabNama.setPreferredSize(new Dimension(65, 30));
+        Labrow1.setPreferredSize(new Dimension(500, 70));
+        Labrow1.setFont(new Font("Tahoma", Font.BOLD, 30));
+        Labrow1.setHorizontalAlignment(SwingConstants.CENTER);
+        Labrow1.setText("Data Diri Penerima");
+        LabFoto.setPreferredSize(new Dimension(200, 200));
+        LabNama.setPreferredSize(new Dimension(95, 30));
         LabNotlp.setPreferredSize(new Dimension(95, 30));
-        LabAlamat.setPreferredSize(new Dimension(65, 30));
-        LabEkspedisi.setPreferredSize(new Dimension(65, 30));
+        LabAlamat.setPreferredSize(new Dimension(95, 30));
+        LabEkspedisi.setPreferredSize(new Dimension(95, 30));
 
         JLabel LabSongket = new JLabel("Jenis Songket");
         LabSongket.setPreferredSize(new Dimension(100, 30));
@@ -337,26 +356,47 @@ public class TabHandler {
 
         spinnerJumlah.setPreferredSize(new Dimension(150, 30));
 
-        gbcPenerima.setWeightx(0.5);
-        gbcPenerima.addComponent(panelPenerima, LabNama,0,0 );
-        gbcPenerima.addComponent(panelPenerima, TFNama,1,0 );
-        gbcPenerima.addComponent(panelPenerima, LabNotlp,2,0 );
-        gbcPenerima.addComponent(panelPenerima, TFNotlp,3,0 );
-        gbcPenerima.setWeightx(1.0);
-        gbcPenerima.addComponent(panelPenerima, LabAlamat, 0, 1);
-        gbcPenerima.addComponent(panelPenerima, TFAlamat, 1, 1, 3);
-        gbcPenerima.addComponent(panelPenerima, LabEkspedisi, 0, 2 );
-        gbcPenerima.addComponent(panelPenerima, ekspedisiCombo, 1, 2);
-        gbcPenerima.addComponent(panelPenerima, LabSongket, 0, 3);
-        gbcPenerima.addComponent(panelPenerima, songketCombo, 1, 3);
-        gbcPenerima.addComponent(panelPenerima, LabWarna, 0, 4);
-        gbcPenerima.addComponent(panelPenerima, warnaCombo, 1, 4);
-        gbcPenerima.addComponent(panelPenerima, LabBahan, 0, 5);
-        gbcPenerima.addComponent(panelPenerima, bahanCombo, 1, 5);
-        gbcPenerima.addComponent(panelPenerima, LabJumlah, 0, 6);
-        gbcPenerima.addComponent(panelPenerima, spinnerJumlah, 1, 6);
+        gbcrow1.setAnchor(GridBagConstraints.CENTER);
+        gbcrow1.setWeightx(1.0);
+        gbcrow1.setWeighty(0.5);
+        gbcrow1.setGridHeight(1);
+        gbcrow1.addComponent(row1, Labrow1, 0, 0, 3);
+        gbcrow1.setWeightx(1.0);
+        gbcrow1.setWeighty(0.3);
+        gbcrow1.setGridHeight(3);
+        gbcrow1.addComponent(row1, LabFoto,0,1,1);
+        gbcrow1.setWeightx(0.5);
+        gbcrow1.setWeighty(0.1); 
+        gbcrow1.setGridHeight(1);
+        gbcrow1.addComponent(row1, rowrow,1,1 );
 
-        //-----------------------------------------------------------------------------------------
+        gbcrowrow.setFill(GridBagConstraints.BOTH);
+        gbcrowrow.setInsets(5,0,5,0);
+        gbcrowrow.addComponent(rowrow, LabNama,0,1 );
+        gbcrowrow.addComponent(rowrow, TFNama,1,1, 2 );
+        gbcrowrow.addComponent(rowrow, LabNotlp,0,2 );
+        gbcrowrow.addComponent(rowrow, TFNotlp,1,2, 2 );
+        gbcrowrow.addComponent(rowrow, LabAlamat, 0, 3);
+        gbcrowrow.addComponent(rowrow, TFAlamat, 1, 3, 2);
+
+        gbcrow2.setInsets(5, 100, 0, 100);
+        gbcrow2.addComponent(row2, LabEkspedisi, 0, 0 );
+        gbcrow2.addComponent(row2, ekspedisiCombo, 0, 1);
+        gbcrow2.addComponent(row2, LabSongket, 1, 0);
+        gbcrow2.addComponent(row2, songketCombo, 1, 1);
+        gbcrow2.addComponent(row2, LabWarna, 0, 2);
+        gbcrow2.addComponent(row2, warnaCombo, 0, 3);
+        gbcrow2.addComponent(row2, LabBahan, 1, 2);
+        gbcrow2.addComponent(row2, bahanCombo, 1, 3);
+        gbcrow2.addComponent(row2, LabJumlah, 0, 4);
+        gbcrow2.addComponent(row2, spinnerJumlah, 0, 5);
+
+        gbcPenerima.setInsets(5, 10,20, 10);
+        gbcPenerima.setFill(GridBagConstraints.BOTH );
+        gbcPenerima.addComponent(panelPenerima, row1, 0, 0);
+        gbcPenerima.setInsets(20, 10,5, 10);
+        gbcPenerima.addComponent(panelPenerima, row2, 0, 1);
+
         JPanel panelStok = new JPanel();
         panelStok.setBackground(Color.MAGENTA);
         panelStok.setLayout(new GridBagLayout());
@@ -428,7 +468,7 @@ public class TabHandler {
         panelButtonPesanan.add(butBatalPesanan);
 
         gbcPesanan.addComponent(panelPesanan, scrollPesanan, 0, 0);
-        gbcPesanan.addComponent(panelPesanan, panelButtonPesanan, 1, 0);
+        gbcPesanan.addComponent(panelPesanan, panelButtonPesanan, 0, 1);
 
         JPanel panelKananContainer = new JPanel();
         panelKananContainer.setLayout(new BoxLayout(panelKananContainer, BoxLayout.Y_AXIS));
@@ -461,7 +501,50 @@ public class TabHandler {
 
     private JPanel createTab2() {
         JPanel panel = new JPanel(new BorderLayout());
-        // Tambahkan komponen ke tab2
+    
+        // Panel utama dengan GridLayout untuk form
+        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    
+        // Komponen input
+        JTextField usernameField = new JTextField();
+        JTextField emailField = new JTextField();
+        JTextField nameField = new JTextField();
+        JTextField phoneField = new JTextField();
+    
+        // Tambahkan label dan field ke formPanel
+        formPanel.add(new JLabel("Username:"));
+        formPanel.add(usernameField);
+    
+        formPanel.add(new JLabel("Email:"));
+        formPanel.add(emailField);
+    
+        formPanel.add(new JLabel("Nama Pengguna:"));
+        formPanel.add(nameField);
+    
+        formPanel.add(new JLabel("Nomor Telepon:"));
+        formPanel.add(phoneField);
+    
+        // Tombol untuk ganti password dan email
+        JButton changePasswordButton = new JButton("Ganti Password");
+        JButton changeEmailButton = new JButton("Ganti Email");
+    
+        // Tambahkan tombol ke formPanel
+        formPanel.add(changePasswordButton);
+        formPanel.add(changeEmailButton);
+    
+        // Tambahkan action listener untuk tombol
+        changePasswordButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(panel, "Ganti Password clicked!");
+        });
+    
+        changeEmailButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(panel, "Ganti Email clicked!");
+        });
+    
+        // Tambahkan formPanel ke panel utama
+        panel.add(formPanel, BorderLayout.CENTER);
+    
         return panel;
     }
 

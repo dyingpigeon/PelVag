@@ -7,7 +7,7 @@ public class Front {
     private final TabHandler tabHandler;
 
     public Front() {
-        frame = new JFrame("Tabbed Pane Example");
+        frame = new JFrame("Songket V1.0");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1280, 720);
 

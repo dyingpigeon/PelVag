@@ -1,8 +1,8 @@
 package TA;
 
 public class Data {
-    private int id;
-    private String label;
+    private final int id;
+    private final String label;
     
     public Data(int id, String label) {
         this.id = id;
