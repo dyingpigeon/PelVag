@@ -297,8 +297,10 @@ public class TabHandler {
 
     private JPanel createTab1() {
         JPanel tab = new JPanel(new BorderLayout());
+        tab.setBackground(new Color(255, 77, 77));
+        
         JPanel panelPenerima = new JPanel(new GridBagLayout());
-        panelPenerima.setBackground(Color.YELLOW);
+        panelPenerima.setBackground(new Color(245, 176, 128));
         LayoutHelper gbcPenerima = new LayoutHelper();
 
         JPanel row1 = new JPanel(new GridBagLayout());
@@ -416,6 +418,7 @@ public class TabHandler {
 
         //-----------------------------------------------------------------------------------------
         JPanel PesananSaatIni = new JPanel();
+        PesananSaatIni.setBackground(new Color(204, 204, 255));
         PesananSaatIni.setLayout(new GridBagLayout());
 
         LayoutHelper gbcPSI = new LayoutHelper();
@@ -423,6 +426,8 @@ public class TabHandler {
         JTable tablePesanan = new JTable(tabelPesananSaatIni);
 
         JScrollPane scrollPesananSaatIni = new JScrollPane(tablePesanan);
+        tablePesanan.setOpaque(false);
+        tablePesanan.setBackground(new Color(0,0,0, 60));
 
         karyawanCombo.setPreferredSize(new Dimension(150, 30));
 
@@ -444,14 +449,16 @@ public class TabHandler {
         JPanel panelPesanan = new JPanel();
         panelPesanan.setVisible(false);
         panelPesanan.setLayout(new GridBagLayout());
+        panelPesanan.setBackground(new Color(204, 255, 204));
 
         JPanel panelButtonPesanan = new JPanel();
         panelButtonPesanan.setLayout(new FlowLayout(FlowLayout.CENTER,5 ,5));
         panelButtonPesanan.setPreferredSize(new Dimension(105, 105));
+        panelButtonPesanan.setOpaque(false);
+        panelButtonPesanan.setBackground(new Color(0,0,0, 60));
 
 
         LayoutHelper gbcPesanan = new LayoutHelper();
-
 
         tabelPesanan.addMouseListener(new MouseAdapter(){
             @Override
@@ -461,6 +468,8 @@ public class TabHandler {
         });
 
         JScrollPane scrollPesanan = new JScrollPane(tabelPesanan);
+        tabelPesanan.setOpaque(false);
+        tabelPesanan.setBackground(new Color(0,0,0, 60));
 
         panelButtonPesanan.add(butUbahPesanan);
         panelButtonPesanan.add(butHapusPesanan);
@@ -480,7 +489,7 @@ public class TabHandler {
         
                 //-----------------------------------------------------------------------------------------
         JPanel buttonPanel = new JPanel(new BorderLayout());
-        // buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.setOpaque(false);
 
         JButton butStok = new JButton("Tabel Songket");
         butStok.addActionListener(e -> {
