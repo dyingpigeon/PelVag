@@ -7,12 +7,13 @@ public class Front {
     private final JFrame frame;
     private final TabHandler tabHandler;
 
-    public Front() {
+    public Front(boolean ra) {
         try{
             UIManager.setLookAndFeel(new FlatMacLightLaf());
         }catch (UnsupportedLookAndFeelException e){
             System.err.println("gagal");
         }
+        
         frame = new JFrame("Songket V1.0");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1280, 720);
@@ -21,7 +22,7 @@ public class Front {
         JTabbedPane tabbedPane = tabHandler.createTabs();
 
         frame.add(tabbedPane);
-        frame.setVisible(true);
+        frame.setVisible(ra);
     }
 
     public TabHandler getTabHandler(){

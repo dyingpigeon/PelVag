@@ -1,3 +1,19 @@
+CREATE TABLE `users` (
+  `user_id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(50) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `nama_depan` VARCHAR(50) NOT NULL,
+  `nama_belakang` VARCHAR(50) NOT NULL,
+  `telepon` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`user_id`)
+);
+INSERT INTO `users` (`user_id`, `username`, `password`, `nama_depan`, `nama_belakang`, `telepon`) VALUES
+  ('000001', 'ahmad', 'q', 'Ahmad', 'Santoso', '081234567890'),
+  ('000002', 'budi', 'password123', 'Budi', 'Setiawan', '082134567891'),
+  ('000003', 'citra', 'password123', 'Citra', 'Permata', '083134567892'),
+  ('000004', 'dewi', 'password123', 'Dewi', 'Sari', '084134567893'),
+  ('000005', 'eko', 'password123', 'Eko', 'Prasetyo', '085134567894');
+
 CREATE TABLE `karyawan` (
   `karyawan_id` int NOT NULL AUTO_INCREMENT,
   `nama` varchar(255) NOT NULL,
@@ -101,10 +117,7 @@ CREATE TABLE `detail_pesanan` (
   `warna_id` int NOT NULL,
   `jumlah` int NOT NULL,
   PRIMARY KEY (`detail_pesanan_id`),
-  FOREIGN KEY (`pesanan_id`) REFERENCES `pesanan` (`pesanan_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`songket_id`) REFERENCES `songket` (`songket_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`bahan_id`) REFERENCES `bahan` (`bahan_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`warna_id`) REFERENCES `warna` (`warna_id`) ON DELETE CASCADE
+  FOREIGN KEY (`pesanan_id`) REFERENCES `pesanan` (`pesanan_id`) ON DELETE CASCADE
 );
 
 INSERT INTO `detail_pesanan` (`detail_pesanan_id`, `pesanan_id`, `songket_id`, `bahan_id`, `warna_id`, `jumlah`) VALUES

@@ -39,10 +39,34 @@ public class TabHandler {
     private JButton butSimUp;    
     private JButton butTamb;        
     private JTable tabelPesanan;
-    JButton butUbahPesanan;
-    JButton butHapusPesanan;
-    JButton butBatalPesanan;
-    JButton butHapusSemua;
+    private JButton butUbahPesanan;
+    private JButton butHapusPesanan;
+    private JButton butBatalPesanan;
+    private JButton butHapusSemua;
+    private JButton butAkun;
+    private JButton butRefresh;
+
+    // --------------
+    private DefaultTableModel modelSongket;
+    private DefaultTableModel modelBahan;
+    private DefaultTableModel modelWarna;
+    private DefaultTableModel modelEkspedisi;
+    private DefaultTableModel modelSementara;
+    private JTable tabelSongket;
+    private JTable tabelWarna;
+    private JTable tabelBahan;
+    private JTable tabelEkspedisi;
+    private JTextField TF;
+    private JButton btnUbah;
+    private JButton btnHapus;
+    private JButton btnTambah;
+    private JComboBox<String> Combo;
+    
+
+
+
+
+
     
 
     public TabHandler(){
@@ -101,6 +125,63 @@ public class TabHandler {
         this.butBatalPesanan.setPreferredSize(new Dimension(100, 30));
         this.butHapusSemua = new JButton("HapusPesanan");
         this.butHapusSemua.setPreferredSize(new Dimension(100, 30));
+        this.butAkun = new JButton("Informasi Akun");
+        this.butAkun.setPreferredSize(new Dimension(100, 30));
+        this.butRefresh = new JButton("Refresh");
+        this.butRefresh.setPreferredSize(new Dimension(100, 30));
+
+        this.modelSongket = new DefaultTableModel(new String[] {"Songket"}, 0){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Mengembalikan false untuk mencegah sel bisa diedit
+                return false;
+            }
+        };
+
+        this.modelBahan = new DefaultTableModel(new String[] {"Bahan"}, 0){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Mengembalikan false untuk mencegah sel bisa diedit
+                return false;
+            }
+        };
+
+        this.modelEkspedisi = new DefaultTableModel(new String[] {"Ekspedisi"}, 0){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Mengembalikan false untuk mencegah sel bisa diedit
+                return false;
+            }
+        };
+
+        this.modelWarna = new DefaultTableModel(new String[] {"Warna"}, 0){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Mengembalikan false untuk mencegah sel bisa diedit
+                return false;
+            }
+        };
+
+        this.modelSementara = new DefaultTableModel(new String[] {"Sementara"}, 0){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Mengembalikan false untuk mencegah sel bisa diedit
+                return false;
+            }
+        };
+
+        this.tabelSongket = new JTable(modelSongket);
+        this.tabelWarna = new JTable(modelWarna);
+        this.tabelBahan = new JTable(modelBahan);
+        this.tabelEkspedisi = new JTable(modelEkspedisi);
+
+        this.btnUbah = new JButton("Ubah");
+        this.btnHapus = new JButton("Hapus");
+        this.btnTambah = new JButton("Tambah");
+
+        this.TF = new JTextField();
+        this.Combo = new JComboBox<>();
+
         try {
             // Memanggil koneksi hanya sekali ketika objek Utama dibuat
             this.connection = DatabaseConnection.getConnection();
@@ -113,6 +194,7 @@ public class TabHandler {
     public JTabbedPane createTabs() {
         JTabbedPane tabbedPane = new JTabbedPane();
 
+        data();
         loadData();
 
         JPanel tab1 = createTab1();
@@ -125,6 +207,306 @@ public class TabHandler {
 
         return tabbedPane;
     }
+    // ------------------------------------------------------------------
+    // private void setupTableModels() {
+    //     // Setup model tabel untuk Songket
+    //     modelSongket = (DefaultTableModel) tabelSongket.getModel();
+    //     modelSongket.setColumnIdentifiers(new String[]{"Songket"});
+
+    //     // Setup model tabel untuk Bahan
+    //     modelBahan = (DefaultTableModel) tabelBahan.getModel();
+    //     modelBahan.setColumnIdentifiers(new String[]{"Bahan"});
+
+    //     // Setup model tabel untuk Warna
+    //     modelWarna = (DefaultTableModel) tabelWarna.getModel();
+    //     modelWarna.setColumnIdentifiers(new String[]{"Warna"});
+
+    //     // Setup model tabel untuk Ekspedisi
+    //     modelEkspedisi = (DefaultTableModel) tabelEkspedisi.getModel();
+    //     modelEkspedisi.setColumnIdentifiers(new String[]{"Ekspedisi"});
+    // }
+
+    private void data(){
+        this.Combo.addItem("Songket");
+        this.Combo.addItem("Bahan");
+        this.Combo.addItem("Warna");
+        this.Combo.addItem("Ekspedisi");
+
+        String[][] queries = {
+            {"select nama from songket", "Songket"},
+            {"select nama from warna", "Warna"},
+            {"select nama from bahan", "Bahan"},
+            {"select nama from ekspedisi", "Ekspedisi"}
+        };
+        
+        try {
+            for (String[] queryData : queries) {
+                String query = queryData[0];
+                String comboType = queryData[1];
+        
+                try (PreparedStatement ps = connection.prepareStatement(query);
+                    ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String nama = rs.getString("nama");
+                        switch (comboType) {
+                            case "Songket" -> addDataToSongket(nama);
+                            case "Warna" -> addDataToWarna(nama);
+                            case "Bahan" -> addDataToBahan(nama);
+                            case "Ekspedisi" -> addDataToEkspedisi(nama);
+                        }
+                    }
+                }
+            }
+        }catch (SQLException e) {
+            System.err.println("Gagal memasukkan data ke combo atau tabel: " + e.getMessage());
+        }
+    }
+
+    private void addDataToSongket(String isi){
+        modelSongket.addRow(new Object[]{isi});
+    }
+    
+    private void addDataToBahan(String isi){
+        modelBahan.addRow(new Object[]{isi});
+    }
+
+    private void addDataToWarna(String isi){
+        modelWarna.addRow(new Object[]{isi});
+    }
+
+    private void addDataToEkspedisi(String isi){
+        modelEkspedisi.addRow(new Object[]{isi});
+    }
+
+    private void addDataToSementara(String isi){
+        modelSementara.addRow(new Object[]{isi});
+    }
+
+    private void handleTableClick(String selectedCategory) {
+        int selectedRow;
+        switch (selectedCategory) {
+            case "Songket" -> {
+                selectedRow = tabelSongket.getSelectedRow();
+                TF.setText(tabelSongket.getValueAt(selectedRow, 0).toString());
+            }
+            case "Bahan" -> {
+                selectedRow = tabelBahan.getSelectedRow();
+                TF.setText(tabelBahan.getValueAt(selectedRow, 0).toString());
+            }
+            case "Warna" -> {
+                selectedRow = tabelWarna.getSelectedRow();
+                TF.setText(tabelWarna.getValueAt(selectedRow, 0).toString());
+            }
+            case "Ekspedisi" -> {
+                selectedRow = tabelEkspedisi.getSelectedRow();
+                TF.setText(tabelEkspedisi.getValueAt(selectedRow, 0).toString());
+            }
+        }
+    }
+
+    private void updateIsi(String pilih) {
+        int selectedRow;
+        String isi = TF.getText();
+        switch (pilih) {
+            case "Songket" -> {
+                selectedRow = tabelSongket.getSelectedRow();
+                String query1 = "UPDATE songket SET nama = ? WHERE nama = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, isi);
+                    stmt.setString(2, tabelSongket.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }catch (SQLException e) {
+                    System.err.println("Gagal memperbarui data detail pesanan: " + e.getMessage());
+                }
+            }
+            case "Bahan" -> {
+                selectedRow = tabelBahan.getSelectedRow();
+                String query1 = "UPDATE bahan SET nama = ? WHERE nama = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, isi);
+                    stmt.setString(2, tabelBahan.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }catch (SQLException e) {
+                    System.err.println("Gagal memperbarui data detail pesanan: " + e.getMessage());
+                }
+            }
+            case "Warna" -> {
+                selectedRow = tabelWarna.getSelectedRow();
+                String query1 = "UPDATE warna SET nama = ? WHERE nama = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, isi);
+                    stmt.setString(2, tabelWarna.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }catch (SQLException e) {
+                    System.err.println("Gagal memperbarui data detail pesanan: " + e.getMessage());
+                }
+            }
+            case "Ekspedisi" -> {
+                selectedRow = tabelEkspedisi.getSelectedRow();
+                String query1 = "UPDATE ekspedisi SET nama = ? WHERE nama = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, isi);
+                    stmt.setString(2, tabelEkspedisi.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }catch (SQLException e) {
+                    System.err.println("Gagal memperbarui data detail pesanan: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    private void Hapus(String pilih) {
+        int selectedRow;
+        switch (pilih) {
+            case "Songket" -> {
+                selectedRow = tabelSongket.getSelectedRow();
+                String query1 = "delete from songket WHERE nama = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, tabelSongket.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }catch (SQLException e) {
+                    System.err.println("Gagal menghapus data: " + e.getMessage());
+                }
+            }
+            case "Bahan" -> {
+                selectedRow = tabelBahan.getSelectedRow();
+                String query1 = "delete from bahan WHERE nama = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, tabelBahan.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }catch (SQLException e) {
+                    System.err.println("Gagal menghapus data: " + e.getMessage());
+                }
+            }
+            case "Warna" -> {
+                selectedRow = tabelWarna.getSelectedRow();
+                String query1 = "delete from warna WHERE nama = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, tabelWarna.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }catch (SQLException e) {
+                    System.err.println("Gagal menghapus data: " + e.getMessage());
+                }
+            }
+            case "Ekspedisi" -> {
+                selectedRow = tabelEkspedisi.getSelectedRow();
+                String query1 = "delete from ekspedisi WHERE nama = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, tabelEkspedisi.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }catch (SQLException e) {
+                    System.err.println("Gagal menghapus data: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    private void refreshDatabase(String pilih) {
+        int selectedRow;
+        switch (pilih) {
+            case "Songket" -> {
+                selectedRow = tabelSongket.getSelectedRow();
+                String ambilData = "Select nama from songket";
+                String query = "TRUNCATE TABLE songket";
+                String query1 = "delete from songket WHERE nama = ?";
+                try (PreparedStatement ps = connection.prepareStatement(ambilData)){
+                    ps.executeQuery();
+
+                    try (PreparedStatement ps1 = connection.prepareStatement(query)){
+                        ResultSet rs = ps1.executeQuery();
+
+                        while (rs.next()){
+                            String nama = rs.getString("nama");
+                            addDataToSementara(nama);
+                        }
+                    }
+
+                    try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                        stmt.setString(1, tabelSongket.getValueAt(selectedRow, 0).toString());
+                        stmt.executeUpdate();
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Gagal menghapus data: " + e.getMessage());
+                }
+            }
+            case "Bahan" -> {
+                selectedRow = tabelBahan.getSelectedRow();
+                String ambilData = "Select nama from bahan";
+                String query = "TRUNCATE TABLE bahan";
+                String query1 = "delete from bahan WHERE nama = ?";
+                try (PreparedStatement ps = connection.prepareStatement(ambilData)){
+                    ps.executeQuery();
+
+                    try (PreparedStatement ps1 = connection.prepareStatement(query)){
+                        ResultSet rs = ps1.executeQuery();
+
+                        while (rs.next()){
+                            String nama = rs.getString("nama");
+                            addDataToSementara(nama);
+                        }
+                    }
+                
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, tabelBahan.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }
+                } catch (SQLException e) {
+                    System.err.println("Gagal menghapus data: " + e.getMessage());
+                }
+            }
+            case "Warna" -> {
+                selectedRow = tabelWarna.getSelectedRow();
+                String ambilData = "Select nama from warna";
+                String query = "TRUNCATE TABLE warna";
+                String query1 = "delete from warna WHERE nama = ?";
+                try (PreparedStatement ps = connection.prepareStatement(ambilData)){
+                    ps.executeQuery();
+
+                    try (PreparedStatement ps1 = connection.prepareStatement(query)){
+                        ResultSet rs = ps1.executeQuery();
+
+                        while (rs.next()){
+                            String nama = rs.getString("nama");
+                            addDataToSementara(nama);
+                        }
+                    }
+                
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, tabelWarna.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }
+            }   catch (SQLException e) {
+                    System.err.println("Gagal menghapus data: " + e.getMessage());
+                }
+            }
+            case "Ekspedisi" -> {
+                selectedRow = tabelSongket.getSelectedRow();
+                String ambilData = "Select nama from Ekspedisi";
+                String query = "TRUNCATE TABLE Ekspedisi";
+                String query1 = "delete from Ekspedisi WHERE nama = ?";
+                try (PreparedStatement ps = connection.prepareStatement(ambilData)){
+                    ps.executeQuery();
+
+                    try (PreparedStatement ps1 = connection.prepareStatement(query)){
+                        ResultSet rs = ps1.executeQuery();
+
+                        while (rs.next()){
+                            String nama = rs.getString("nama");
+                            addDataToSementara(nama);
+                        }
+                    }
+                
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, tabelEkspedisi.getValueAt(selectedRow, 0).toString());
+                    stmt.executeUpdate();
+                }
+            }   catch (SQLException e) {
+                    System.err.println("Gagal menghapus data: " + e.getMessage());
+                }
+            }
+        }
+    }
+    // ------------------------------------------------------------------
 
     private void addDataToCombo(JComboBox<Data> combo, int id, String isi){
         combo.addItem(new Data(id, isi));
@@ -400,7 +782,7 @@ public class TabHandler {
         gbcPenerima.addComponent(panelPenerima, row2, 0, 1);
 
         JPanel panelStok = new JPanel();
-        panelStok.setBackground(Color.MAGENTA);
+        panelStok.setBackground(new Color(245, 176, 128));
         panelStok.setLayout(new GridBagLayout());
         panelStok.setVisible(false);
 
@@ -418,7 +800,7 @@ public class TabHandler {
 
         //-----------------------------------------------------------------------------------------
         JPanel PesananSaatIni = new JPanel();
-        PesananSaatIni.setBackground(new Color(204, 204, 255));
+        PesananSaatIni.setBackground(new Color(249, 235, 199));
         PesananSaatIni.setLayout(new GridBagLayout());
 
         LayoutHelper gbcPSI = new LayoutHelper();
@@ -501,7 +883,13 @@ public class TabHandler {
             toggleVisibility(tab, panelPesanan, PesananSaatIni);
         });
 
+        // butAkun.addActionListener(e -> {
+            
+        // });
+
         buttonPanel.add(butStok, BorderLayout.WEST);
+        buttonPanel.add(butRefresh, BorderLayout.CENTER);
+        buttonPanel.add(butAkun, BorderLayout.AFTER_LAST_LINE);
         buttonPanel.add(butUbah, BorderLayout.EAST);
 
         tab.add(buttonPanel, BorderLayout.NORTH);
@@ -510,50 +898,150 @@ public class TabHandler {
 
     private JPanel createTab2() {
         JPanel panel = new JPanel(new BorderLayout());
-    
-        // Panel utama dengan GridLayout untuk form
-        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 10));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    
-        // Komponen input
-        JTextField usernameField = new JTextField();
-        JTextField emailField = new JTextField();
-        JTextField nameField = new JTextField();
-        JTextField phoneField = new JTextField();
-    
-        // Tambahkan label dan field ke formPanel
-        formPanel.add(new JLabel("Username:"));
-        formPanel.add(usernameField);
-    
-        formPanel.add(new JLabel("Email:"));
-        formPanel.add(emailField);
-    
-        formPanel.add(new JLabel("Nama Pengguna:"));
-        formPanel.add(nameField);
-    
-        formPanel.add(new JLabel("Nomor Telepon:"));
-        formPanel.add(phoneField);
-    
-        // Tombol untuk ganti password dan email
-        JButton changePasswordButton = new JButton("Ganti Password");
-        JButton changeEmailButton = new JButton("Ganti Email");
-    
-        // Tambahkan tombol ke formPanel
-        formPanel.add(changePasswordButton);
-        formPanel.add(changeEmailButton);
-    
-        // Tambahkan action listener untuk tombol
-        changePasswordButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(panel, "Ganti Password clicked!");
+        JPanel jPanel1 = new JPanel();
+        JPanel jPanel2 = new JPanel();
+
+        // Create components for jPanel1
+        // JTextField TF = new JTextField();
+        // JButton btnUbah = new JButton("Ubah");
+        // JButton btnHapus = new JButton("Hapus");
+        // JButton btnTambah = new JButton("Tambah");
+        // JComboBox<String> Combo = new JComboBox<>();
+        
+        // Set up action listeners for buttons
+
+        btnUbah.addActionListener(e -> {
+            String pilih = (String) Combo.getSelectedItem();
+            updateIsi(pilih);
         });
-    
-        changeEmailButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(panel, "Ganti Email clicked!");
+        
+        // btnHapus.addActionListener(new ActionListener() {
+        //     public void actionPerformed(ActionEvent evt) {
+        //         // Handle Hapus button action
+        //     }
+        // });
+        
+        // btnTambah.addActionListener(new ActionListener() {
+        //     public void actionPerformed(ActionEvent evt) {
+        //         // Handle Tambah button action
+        //     }
+        // });
+        
+        // Combo.addActionListener(new ActionListener() {
+        //     public void actionPerformed(ActionEvent evt) {
+        //         // Handle Combo action
+        //     }
+        // });
+
+        // Set layout and add components to jPanel1
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnUbah)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnHapus)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnTambah))
+                    .addComponent(TF))
+                .addGap(24, 24, 24)
+                .addComponent(Combo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(112, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(113, 113, 113)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(TF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Combo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnUbah)
+                    .addComponent(btnHapus)
+                    .addComponent(btnTambah))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        // Create tables and scroll panes for jPanel2
+        JScrollPane scrollSongket = new JScrollPane();
+        scrollSongket.setViewportView(tabelSongket);
+
+        JScrollPane scrollWarna = new JScrollPane();
+        scrollWarna.setViewportView(tabelWarna);
+
+        JScrollPane scrollBahan = new JScrollPane();
+        scrollBahan.setViewportView(tabelBahan);
+
+        JScrollPane scrollEkspedisi = new JScrollPane();
+        scrollEkspedisi.setViewportView(tabelEkspedisi);
+
+        // Set layout and add components to jPanel2
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scrollSongket, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollBahan, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollWarna, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollEkspedisi, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(60, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(scrollBahan, GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                    .addComponent(scrollWarna, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(scrollEkspedisi, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(scrollSongket, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(124, 124, 124))
+        );
+
+
+        tabelBahan.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String rah = (String) Combo.getSelectedItem();
+                handleTableClick(rah);
+            }
         });
-    
-        // Tambahkan formPanel ke panel utama
-        panel.add(formPanel, BorderLayout.CENTER);
-    
+
+        tabelEkspedisi.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent er) {
+                String rah = (String) Combo.getSelectedItem();
+                handleTableClick(rah);
+            }
+        });
+
+        tabelSongket.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent es) {
+                String rah = (String) Combo.getSelectedItem();
+                handleTableClick(rah);
+            }
+        });
+
+        tabelWarna.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent et) {
+                String rah = (String) Combo.getSelectedItem();
+                handleTableClick(rah);
+            }
+        });
+
+        panel.add(jPanel1, BorderLayout.WEST);
+        panel.add(jPanel2, BorderLayout.EAST);
         return panel;
     }
 
@@ -642,6 +1130,11 @@ public class TabHandler {
         warnaCombo.setSelectedIndex(0);
         bahanCombo.setSelectedIndex(0);
         karyawanCombo.setSelectedIndex(0);
+        TF.setText("t");
+        tabelSongket.clearSelection();
+        tabelBahan.clearSelection();
+        tabelEkspedisi.clearSelection();
+        tabelWarna.clearSelection();
     }
 
     public void kosongkantabel(){
@@ -662,6 +1155,12 @@ public class TabHandler {
         this.idCounterWarna = 400001;
         this.idCounterEkspedisi = 500001;
         loadData();
+
+        modelBahan.setRowCount(0);
+        modelEkspedisi.setRowCount(0);
+        modelSongket.setRowCount(0);
+        modelWarna.setRowCount(0);
+        data();
     }
 
     public boolean validasiInput() {
@@ -709,5 +1208,13 @@ public class TabHandler {
 
     public void HapusSemua (ActionListener listener){
         butHapusSemua.addActionListener(listener);
+    }
+
+    public void Akun (ActionListener listener){
+        butAkun.addActionListener(listener);
+    }
+
+    public void Refresh (ActionListener listener){
+        butRefresh.addActionListener(listener);
     }
 }

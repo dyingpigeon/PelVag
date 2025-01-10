@@ -4,9 +4,11 @@ import java.awt.event.ActionEvent;
 
 public class DataController {
     private final TabHandler GUI;
+    private final UbahPassworddanUsername PASS;
 
-    public DataController(TabHandler gui, DataHandler hand){
+    public DataController(TabHandler gui, DataHandler hand, UbahPassworddanUsername pass, Login login){
         this.GUI = gui;
+        this.PASS = pass;
 
         this.GUI.simpanKeTabel((ActionEvent e) -> {
             if (!gui.validasiInput()) {
@@ -117,6 +119,19 @@ public class DataController {
         this.GUI.HapusSemua((ActionEvent e) -> {
             hand.setIDpesanan(gui.getIDpesanan());
             hand.deletePesananFromDatabase();
+            gui.restart();
+        });
+
+        this.GUI.Akun((ActionEvent e) -> {
+            System.out.println("Akun Diklik");
+            hand.setIDLogin(login.getIDLogin());
+            pass.setUserID(hand.getIDLogin());
+            System.out.println(login.getIDLogin());
+            pass.setVisible(true);
+        });
+
+        this.GUI.Refresh((ActionEvent e) -> {
+            System.out.println("Refresh Diklik");
             gui.restart();
         });
     }

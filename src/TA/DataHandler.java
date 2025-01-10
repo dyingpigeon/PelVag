@@ -15,6 +15,7 @@ public class DataHandler {
     private String songket;
     private String warna;
     private String bahan;
+    private int IDlogin;
     private int IDekspedisi;
     private int IDsongket;
     private int IDwarna;
@@ -151,6 +152,14 @@ public class DataHandler {
 
     public void setIDKaryawan(Data karyawan) {
         this.IDkaryawan = (int) karyawan.getId();
+    }
+
+    public int getIDLogin(){
+        return IDlogin;
+    }
+
+    public void setIDLogin(int idlogin){
+        this.IDlogin = idlogin;
     }
 
     public DefaultTableModel getTabelPesananSaatIni() {
