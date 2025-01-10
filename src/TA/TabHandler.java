@@ -370,6 +370,7 @@ public class TabHandler {
             }
             case "Bahan" -> {
                 selectedRow = tabelBahan.getSelectedRow();
+                System.out.println(tabelBahan.getValueAt(selectedRow, 0).toString());
                 String query1 = "delete from bahan WHERE nama = ?";
                 try (PreparedStatement stmt = connection.prepareStatement(query1)) {
                     stmt.setString(1, tabelBahan.getValueAt(selectedRow, 0).toString());
@@ -399,112 +400,172 @@ public class TabHandler {
                 }
             }
         }
+        refreshDatabase(pilih);
     }
 
     private void refreshDatabase(String pilih) {
-        int selectedRow;
         switch (pilih) {
-            case "Songket" -> {
-                selectedRow = tabelSongket.getSelectedRow();
-                String ambilData = "Select nama from songket";
-                String query = "TRUNCATE TABLE songket";
-                String query1 = "delete from songket WHERE nama = ?";
-                try (PreparedStatement ps = connection.prepareStatement(ambilData)){
-                    ps.executeQuery();
-
-                    try (PreparedStatement ps1 = connection.prepareStatement(query)){
-                        ResultSet rs = ps1.executeQuery();
-
-                        while (rs.next()){
+            case "Ekspedisi" -> {
+                String ambilData = "SELECT nama FROM ekspedisi";
+                String queryTruncate = "TRUNCATE TABLE ekspedisi";
+                String queryInsert = "INSERT INTO ekspedisi (ekspedisi_id, nama) VALUES (?, ?)";
+                String queryInsertNama = "INSERT INTO ekspedisi (nama) VALUES (?)";
+        
+                try {
+                    // Ambil data dari tabel ekspedisi dan masukkan ke tabel sementara
+                    try (PreparedStatement ps = connection.prepareStatement(ambilData)) {
+                        ResultSet rs = ps.executeQuery();
+                        while (rs.next()) {
                             String nama = rs.getString("nama");
                             addDataToSementara(nama);
                         }
                     }
-
-                    try (PreparedStatement stmt = connection.prepareStatement(query1)) {
-                        stmt.setString(1, tabelSongket.getValueAt(selectedRow, 0).toString());
+        
+                    // Truncate tabel ekspedisi
+                    try (PreparedStatement psTruncate = connection.prepareStatement(queryTruncate)) {
+                        psTruncate.executeUpdate();
+                    }
+        
+                    // Insert data baru ke ekspedisi
+                    try (PreparedStatement stmt = connection.prepareStatement(queryInsert)) {
+                        stmt.setInt(1, 500001); // Contoh ID
+                        stmt.setString(2, modelSementara.getValueAt(0, 0).toString());
                         stmt.executeUpdate();
                     }
+        
+                    // Insert data tambahan ke ekspedisi
+                    for (int i = 1; i < modelSementara.getRowCount(); i++) {
+                        try (PreparedStatement psInsertNama = connection.prepareStatement(queryInsertNama)) {
+                            psInsertNama.setString(1, modelSementara.getValueAt(i, 0).toString());
+                            psInsertNama.executeUpdate();
+                        }
+                    }
                 } catch (SQLException e) {
-                    System.err.println("Gagal menghapus data: " + e.getMessage());
+                    System.err.println("Error: " + e.getMessage());
                 }
+                modelSementara.setRowCount(0);
+            }
+            case "Songket" -> {
+                String ambilData = "SELECT nama FROM songket";
+                String queryTruncate = "TRUNCATE TABLE songket";
+                String queryInsert = "INSERT INTO songket (songket_id, nama) VALUES (?, ?)";
+                String queryInsertNama = "INSERT INTO songket (nama) VALUES (?)";
+        
+                try {
+                    // Ambil data dari tabel songket dan masukkan ke tabel sementara
+                    try (PreparedStatement ps = connection.prepareStatement(ambilData)) {
+                        ResultSet rs = ps.executeQuery();
+                        while (rs.next()) {
+                            String nama = rs.getString("nama");
+                            addDataToSementara(nama);
+                        }
+                    }
+        
+                    // Truncate tabel songket
+                    try (PreparedStatement psTruncate = connection.prepareStatement(queryTruncate)) {
+                        psTruncate.executeUpdate();
+                    }
+        
+                    // Insert data baru ke songket
+                    try (PreparedStatement stmt = connection.prepareStatement(queryInsert)) {
+                        stmt.setInt(1, 200001); // Contoh ID
+                        stmt.setString(2, modelSementara.getValueAt(0, 0).toString());
+                        stmt.executeUpdate();
+                    }
+        
+                    // Insert data tambahan ke songket
+                    for (int i = 1; i < modelSementara.getRowCount(); i++) {
+                        try (PreparedStatement psInsertNama = connection.prepareStatement(queryInsertNama)) {
+                            psInsertNama.setString(1, modelSementara.getValueAt(i, 0).toString());
+                            psInsertNama.executeUpdate();
+                        }
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Error: " + e.getMessage());
+                }
+                modelSementara.setRowCount(0);
             }
             case "Bahan" -> {
-                selectedRow = tabelBahan.getSelectedRow();
-                String ambilData = "Select nama from bahan";
-                String query = "TRUNCATE TABLE bahan";
-                String query1 = "delete from bahan WHERE nama = ?";
-                try (PreparedStatement ps = connection.prepareStatement(ambilData)){
-                    ps.executeQuery();
-
-                    try (PreparedStatement ps1 = connection.prepareStatement(query)){
-                        ResultSet rs = ps1.executeQuery();
-
-                        while (rs.next()){
+                String ambilData = "SELECT nama FROM bahan";
+                String queryTruncate = "TRUNCATE TABLE bahan";
+                String queryInsert = "INSERT INTO bahan (bahan_id, nama) VALUES (?, ?)";
+                String queryInsertNama = "INSERT INTO bahan (nama) VALUES (?)";
+        
+                try {
+                    // Ambil data dari tabel bahan dan masukkan ke tabel sementara
+                    try (PreparedStatement ps = connection.prepareStatement(ambilData)) {
+                        ResultSet rs = ps.executeQuery();
+                        while (rs.next()) {
                             String nama = rs.getString("nama");
                             addDataToSementara(nama);
                         }
                     }
-                
-                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
-                    stmt.setString(1, tabelBahan.getValueAt(selectedRow, 0).toString());
-                    stmt.executeUpdate();
-                }
+        
+                    // Truncate tabel bahan
+                    try (PreparedStatement psTruncate = connection.prepareStatement(queryTruncate)) {
+                        psTruncate.executeUpdate();
+                    }
+        
+                    // Insert data baru ke bahan
+                    try (PreparedStatement stmt = connection.prepareStatement(queryInsert)) {
+                        stmt.setInt(1, 300001); // Contoh ID
+                        stmt.setString(2, modelSementara.getValueAt(0, 0).toString());
+                        stmt.executeUpdate();
+                    }
+        
+                    // Insert data tambahan ke bahan
+                    for (int i = 1; i < modelSementara.getRowCount(); i++) {
+                        try (PreparedStatement psInsertNama = connection.prepareStatement(queryInsertNama)) {
+                            psInsertNama.setString(1, modelSementara.getValueAt(i, 0).toString());
+                            psInsertNama.executeUpdate();
+                        }
+                    }
                 } catch (SQLException e) {
-                    System.err.println("Gagal menghapus data: " + e.getMessage());
+                    System.err.println("Error: " + e.getMessage());
                 }
+                modelSementara.setRowCount(0);
             }
             case "Warna" -> {
-                selectedRow = tabelWarna.getSelectedRow();
-                String ambilData = "Select nama from warna";
-                String query = "TRUNCATE TABLE warna";
-                String query1 = "delete from warna WHERE nama = ?";
-                try (PreparedStatement ps = connection.prepareStatement(ambilData)){
-                    ps.executeQuery();
-
-                    try (PreparedStatement ps1 = connection.prepareStatement(query)){
-                        ResultSet rs = ps1.executeQuery();
-
-                        while (rs.next()){
+                String ambilData = "SELECT nama FROM warna";
+                String queryTruncate = "TRUNCATE TABLE warna";
+                String queryInsert = "INSERT INTO warna (warna_id, nama) VALUES (?, ?)";
+                String queryInsertNama = "INSERT INTO warna (nama) VALUES (?)";
+        
+                try {
+                    // Ambil data dari tabel warna dan masukkan ke tabel sementara
+                    try (PreparedStatement ps = connection.prepareStatement(ambilData)) {
+                        ResultSet rs = ps.executeQuery();
+                        while (rs.next()) {
                             String nama = rs.getString("nama");
                             addDataToSementara(nama);
                         }
                     }
-                
-                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
-                    stmt.setString(1, tabelWarna.getValueAt(selectedRow, 0).toString());
-                    stmt.executeUpdate();
-                }
-            }   catch (SQLException e) {
-                    System.err.println("Gagal menghapus data: " + e.getMessage());
-                }
-            }
-            case "Ekspedisi" -> {
-                selectedRow = tabelSongket.getSelectedRow();
-                String ambilData = "Select nama from Ekspedisi";
-                String query = "TRUNCATE TABLE Ekspedisi";
-                String query1 = "delete from Ekspedisi WHERE nama = ?";
-                try (PreparedStatement ps = connection.prepareStatement(ambilData)){
-                    ps.executeQuery();
-
-                    try (PreparedStatement ps1 = connection.prepareStatement(query)){
-                        ResultSet rs = ps1.executeQuery();
-
-                        while (rs.next()){
-                            String nama = rs.getString("nama");
-                            addDataToSementara(nama);
+        
+                    // Truncate tabel warna
+                    try (PreparedStatement psTruncate = connection.prepareStatement(queryTruncate)) {
+                        psTruncate.executeUpdate();
+                    }
+        
+                    // Insert data baru ke warna
+                    try (PreparedStatement stmt = connection.prepareStatement(queryInsert)) {
+                        stmt.setInt(1, 400001); // Contoh ID
+                        stmt.setString(2, modelSementara.getValueAt(0, 0).toString());
+                        stmt.executeUpdate();
+                    }
+        
+                    // Insert data tambahan ke warna
+                    for (int i = 1; i < modelSementara.getRowCount(); i++) {
+                        try (PreparedStatement psInsertNama = connection.prepareStatement(queryInsertNama)) {
+                            psInsertNama.setString(1, modelSementara.getValueAt(i, 0).toString());
+                            psInsertNama.executeUpdate();
                         }
                     }
-                
-                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
-                    stmt.setString(1, tabelEkspedisi.getValueAt(selectedRow, 0).toString());
-                    stmt.executeUpdate();
+                } catch (SQLException e) {
+                    System.err.println("Error: " + e.getMessage());
                 }
-            }   catch (SQLException e) {
-                    System.err.println("Gagal menghapus data: " + e.getMessage());
-                }
+                modelSementara.setRowCount(0);
             }
-        }
+        }        
     }
     // ------------------------------------------------------------------
 
@@ -914,6 +975,11 @@ public class TabHandler {
             String pilih = (String) Combo.getSelectedItem();
             updateIsi(pilih);
         });
+
+        btnHapus.addActionListener(e -> {
+            String pilih = (String) Combo.getSelectedItem();
+            Hapus(pilih);
+        });
         
         // btnHapus.addActionListener(new ActionListener() {
         //     public void actionPerformed(ActionEvent evt) {
@@ -1160,6 +1226,7 @@ public class TabHandler {
         modelEkspedisi.setRowCount(0);
         modelSongket.setRowCount(0);
         modelWarna.setRowCount(0);
+        Combo.removeAllItems();
         data();
     }
 
