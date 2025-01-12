@@ -211,8 +211,8 @@ public class TabHandler {
         JPanel tab3 = createTab3();
 
         tabbedPane.addTab("Buat Order", tab1);
-        tabbedPane.addTab("Ubah Order", tab2);
-        tabbedPane.addTab("e-commerce", tab3);
+        tabbedPane.addTab("Ubah Stok", tab2);
+        // tabbedPane.addTab("e-commerce", tab3);
 
         return tabbedPane;
     }
