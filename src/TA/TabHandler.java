@@ -137,7 +137,7 @@ public class TabHandler {
         this.butBatalPesanan = new JButton("Batal");
         this.butBatalPesanan.setPreferredSize(new Dimension(100, 30));
         this.butHapusSemua = new JButton("HapusPesanan");
-        this.butHapusSemua.setPreferredSize(new Dimension(100, 30));
+        this.butHapusSemua.setPreferredSize(new Dimension(400, 30));
         this.butAkun = new JButton("Informasi Akun");
         this.butAkun.setPreferredSize(new Dimension(100, 30));
         this.butRefresh = new JButton("Refresh");
@@ -1037,9 +1037,9 @@ public class TabHandler {
         panelPesanan.setBackground(new Color(b));
 
         JPanel panelButtonPesanan = new JPanel();
-        panelButtonPesanan.setLayout(new FlowLayout(FlowLayout.CENTER,5 ,5));
-        panelButtonPesanan.setPreferredSize(new Dimension(105, 105));
-        panelButtonPesanan.setBackground(new Color(c));
+        panelButtonPesanan.setLayout(new FlowLayout(FlowLayout.CENTER,10 ,5));
+        panelButtonPesanan.setPreferredSize(new Dimension(105, 75));
+        panelButtonPesanan.setBackground(new Color(a));
 
 
         LayoutHelper gbcPesanan = new LayoutHelper();
@@ -1057,8 +1057,8 @@ public class TabHandler {
 
         panelButtonPesanan.add(butUbahPesanan);
         panelButtonPesanan.add(butHapusPesanan);
-        panelButtonPesanan.add(butHapusSemua);
         panelButtonPesanan.add(butBatalPesanan);
+        panelButtonPesanan.add(butHapusSemua);
 
         gbcPesanan.setInsets(5, 0, 5, 30);
         gbcPesanan.addComponent(panelPesanan, scrollPesanan, 0, 0);
