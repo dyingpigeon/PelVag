@@ -27,6 +27,7 @@ public class TabHandler {
     private DefaultTableModel tabelPesananSaatIni;
     private DefaultTableModel tabelModelDetailPesanan;
     private DefaultTableModel tabelModelPesanan;
+    private DefaultTableModel tabelModelPesananNoID;
     private int idCounterKaryawan;
     private int idCounterSongket;
     private int idCounterBahan;
@@ -39,6 +40,7 @@ public class TabHandler {
     private JButton butSimUp;    
     private JButton butTamb;        
     private JTable tabelPesanan;
+    private JTable tabelPesananNoID;
     private JButton butUbahPesanan;
     private JButton butHapusPesanan;
     private JButton butBatalPesanan;
@@ -61,7 +63,12 @@ public class TabHandler {
     private JButton btnHapus;
     private JButton btnTambah;
     private JComboBox<String> Combo;
-    
+
+    // -------------------
+    private int a;
+    private int b;
+    private int c;
+    private int d;
 
 
 
@@ -71,10 +78,10 @@ public class TabHandler {
 
     public TabHandler(){
         String[] headerStok = {"Songket", "Harga", "Stok"};
-        this.modelStok = new DefaultTableModel(headerStok, 0); // Inisialisasi model
-        this.TFNama = new JTextField(15);
-        this.TFNotlp = new JTextField(15);
-        this.TFAlamat = new JTextField(15);
+        this.modelStok = new DefaultTableModel(headerStok, 0);
+        this.TFNama = new JTextField(25);
+        this.TFNotlp = new JTextField(25);
+        this.TFAlamat = new JTextField(25);
         this.ekspedisiCombo = new JComboBox<>();
         this.songketCombo = new JComboBox<>();
         this.warnaCombo = new JComboBox<>();
@@ -87,25 +94,31 @@ public class TabHandler {
         this.tabelPesananSaatIni = new DefaultTableModel(headerDetailPesanan, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Mengembalikan false untuk mencegah sel bisa diedit
                 return false;
             }
         };
         this.tabelModelDetailPesanan = new DefaultTableModel(headerDetailPesanan, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Mengembalikan false untuk mencegah sel bisa diedit
                 return false;
             }
         };
         this.tabelModelPesanan = new DefaultTableModel(headerPesanan, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Mengembalikan false untuk mencegah sel bisa diedit
                 return false;
             }
         };
+
+        this.tabelModelPesananNoID = new DefaultTableModel(headerPesanan, 0){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
         this.tabelPesanan = new JTable(tabelModelPesanan);
+        this.tabelPesananNoID = new JTable(tabelModelPesananNoID);
         this.butUpload = new JButton("Upload");
         this.butSimpan = new JButton("Simpan");
         this.butSimUp = new JButton("Simpan dan Upload");    
@@ -133,7 +146,6 @@ public class TabHandler {
         this.modelSongket = new DefaultTableModel(new String[] {"Songket"}, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Mengembalikan false untuk mencegah sel bisa diedit
                 return false;
             }
         };
@@ -141,7 +153,6 @@ public class TabHandler {
         this.modelBahan = new DefaultTableModel(new String[] {"Bahan"}, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Mengembalikan false untuk mencegah sel bisa diedit
                 return false;
             }
         };
@@ -149,7 +160,6 @@ public class TabHandler {
         this.modelEkspedisi = new DefaultTableModel(new String[] {"Ekspedisi"}, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Mengembalikan false untuk mencegah sel bisa diedit
                 return false;
             }
         };
@@ -157,7 +167,6 @@ public class TabHandler {
         this.modelWarna = new DefaultTableModel(new String[] {"Warna"}, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Mengembalikan false untuk mencegah sel bisa diedit
                 return false;
             }
         };
@@ -165,7 +174,6 @@ public class TabHandler {
         this.modelSementara = new DefaultTableModel(new String[] {"Sementara"}, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Mengembalikan false untuk mencegah sel bisa diedit
                 return false;
             }
         };
@@ -196,6 +204,7 @@ public class TabHandler {
 
         data();
         loadData();
+        setPallete1();
 
         JPanel tab1 = createTab1();
         JPanel tab2 = createTab2();
@@ -304,6 +313,13 @@ public class TabHandler {
         }
     }
 
+    private void setPallete1(){
+        this.a = new Color(254, 249, 225).getRGB();
+        this.b = new Color(229, 208, 172).getRGB();
+        this.c = new Color(163, 29, 29).getRGB();
+        this.d = new Color(109, 35, 35).getRGB();
+    }
+
     private void updateIsi(String pilih) {
         int selectedRow;
         String isi = TF.getText();
@@ -350,6 +366,52 @@ public class TabHandler {
                     stmt.executeUpdate();
                 }catch (SQLException e) {
                     System.err.println("Gagal memperbarui data detail pesanan: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    private void tambah(String pilih) {
+        String isi = TF.getText();
+        switch (pilih) {
+            case "Songket" -> {
+                String query1 = "INSERT INTO songket (nama) VALUES (?)";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, isi);
+                    stmt.executeUpdate();
+                    System.out.println("Data berhasil ditambahkan ke tabel Songket.");
+                } catch (SQLException e) {
+                    System.err.println("Gagal menambahkan data ke tabel Songket: " + e.getMessage());
+                }
+            }
+            case "Bahan" -> {
+                String query1 = "INSERT INTO bahan (nama) VALUES (?)";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, isi);
+                    stmt.executeUpdate();
+                    System.out.println("Data berhasil ditambahkan ke tabel Bahan.");
+                } catch (SQLException e) {
+                    System.err.println("Gagal menambahkan data ke tabel Bahan: " + e.getMessage());
+                }
+            }
+            case "Warna" -> {
+                String query1 = "INSERT INTO warna (nama) VALUES (?)";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, isi);
+                    stmt.executeUpdate();
+                    System.out.println("Data berhasil ditambahkan ke tabel Warna.");
+                } catch (SQLException e) {
+                    System.err.println("Gagal menambahkan data ke tabel Warna: " + e.getMessage());
+                }
+            }
+            case "Ekspedisi" -> {
+                String query1 = "INSERT INTO ekspedisi (nama) VALUES (?)";
+                try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+                    stmt.setString(1, isi);
+                    stmt.executeUpdate();
+                    System.out.println("Data berhasil ditambahkan ke tabel Ekspedisi.");
+                } catch (SQLException e) {
+                    System.err.println("Gagal menambahkan data ke tabel Ekspedisi: " + e.getMessage());
                 }
             }
         }
@@ -545,7 +607,6 @@ public class TabHandler {
                     try (PreparedStatement psTruncate = connection.prepareStatement(queryTruncate)) {
                         psTruncate.executeUpdate();
                     }
-        
                     // Insert data baru ke warna
                     try (PreparedStatement stmt = connection.prepareStatement(queryInsert)) {
                         stmt.setInt(1, 400001); // Contoh ID
@@ -581,6 +642,14 @@ public class TabHandler {
                                 int IDekspedisi, int IDsongket, int IDbahan, int IDwarna,
                                 int jumlah){
         tabelModelPesanan.addRow(new Object[]{id, ID, penerima, telepon, alamat, 
+                                IDekspedisi, IDsongket, IDbahan, IDwarna, 
+                                jumlah});
+                                }
+
+    private void addDataToTable(int id, int ID, String penerima, String telepon, String alamat, 
+                                String IDekspedisi, String IDsongket, String IDbahan, String IDwarna,
+                                int jumlah){
+        tabelModelPesananNoID.addRow(new Object[]{id, ID, penerima, telepon, alamat, 
                                 IDekspedisi, IDsongket, IDbahan, IDwarna, 
                                 jumlah});
                                 }
@@ -664,6 +733,55 @@ public class TabHandler {
                 }
 
             } 
+
+            String Walahi = """
+                            SELECT 
+                                pesanan.pesanan_id,
+                                ekspedisi.nama AS nama_ekspedisi,
+                                pesanan.penerima,
+                                pesanan.telepon,
+                                pesanan.alamat,
+                                detail_pesanan.detail_pesanan_id,
+                                songket.nama AS nama_songket,
+                                bahan.nama AS nama_bahan,
+                                warna.nama AS nama_warna,
+                                detail_pesanan.jumlah
+                            FROM 
+                                pesanan
+                            JOIN 
+                                detail_pesanan ON pesanan.pesanan_id = detail_pesanan.pesanan_id
+                            JOIN 
+                                ekspedisi ON pesanan.ekspedisi_id = ekspedisi.ekspedisi_id
+                            JOIN 
+                                songket ON detail_pesanan.songket_id = songket.songket_id
+                            JOIN 
+                                bahan ON detail_pesanan.bahan_id = bahan.bahan_id
+                            JOIN 
+                                warna ON detail_pesanan.warna_id = warna.warna_id
+                            ORDER BY 
+                                pesanan.pesanan_id, detail_pesanan.detail_pesanan_id;
+                            """;
+            try (PreparedStatement ps = connection.prepareStatement(Walahi);
+            ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+                    // Mengambil data dari ResultSet
+                    int detailpesananid = rs.getInt("detail_pesanan_id");
+                    int pesananid = rs.getInt("pesanan_id");
+                    String ekspedisiId = rs.getString("nama_ekspedisi");
+                    String penerima = rs.getString("penerima");
+                    String telepon = rs.getString("telepon");
+                    String alamat = rs.getString("alamat");
+                    String songketId = rs.getString("nama_songket");
+                    String bahanId = rs.getString("nama_bahan");
+                    String warnaId = rs.getString("nama_warna");
+                    int jumlah = rs.getInt("jumlah");
+
+                    // Menambahkan data ke DefaultTableModel
+                    addDataToTable(detailpesananid, pesananid, penerima, telepon, alamat, ekspedisiId, songketId, bahanId, warnaId, jumlah);
+                }
+
+            } 
         } catch (SQLException e) {
             System.err.println("Gagal memasukkan data ke combo atau tabel: " + e.getMessage());
         }
@@ -695,6 +813,8 @@ public class TabHandler {
         
 
         spinnerJumlah.setValue(tabelModelPesanan.getValueAt(selectedRow, 9));
+
+        System.out.println(selectedRow);
         // Mendapatkan indeks baris dan kolom yang diklik
         int row = tabel.rowAtPoint(e.getPoint()); // Mendapatkan baris yang diklik
         int column = 0; // Mendapatkan kolom yang diklik
@@ -740,28 +860,30 @@ public class TabHandler {
 
     private JPanel createTab1() {
         JPanel tab = new JPanel(new BorderLayout());
-        tab.setBackground(new Color(255, 77, 77));
-        
+        tab.setBackground(new Color(d));
+
         JPanel panelPenerima = new JPanel(new GridBagLayout());
-        panelPenerima.setBackground(new Color(245, 176, 128));
+        panelPenerima.setBackground(new Color(b));
         LayoutHelper gbcPenerima = new LayoutHelper();
 
         JPanel row1 = new JPanel(new GridBagLayout());
+        // row1.setBackground(Color.ORANGE);
         LayoutHelper gbcrow1 = new LayoutHelper();
-        row1.setOpaque(false);
+        row1.setBackground(new Color(a));
 
         JPanel rowrow = new JPanel(new GridBagLayout());
-        rowrow.setPreferredSize(new Dimension(500, 200));
+        rowrow.setSize(new Dimension(500, 300));
         LayoutHelper gbcrowrow = new LayoutHelper();
         rowrow.setOpaque(false);
 
         JPanel row2 = new JPanel(new GridBagLayout());
         LayoutHelper gbcrow2 = new LayoutHelper();
-        row2.setOpaque(false);
+        row2.setBackground(new Color(a));
 
         ImageIcon profil = new ImageIcon(TabHandler.class.getResource("/TA.Foto/Profile200.png"));
 
         JLabel Labrow1 = new JLabel();
+        JLabel Labrow2 = new JLabel();
         JLabel LabFoto = new JLabel(profil);
         JLabel LabNama = new JLabel("Nama: ");
         JLabel LabNotlp = new JLabel("Nomor Telepon: ");
@@ -772,7 +894,11 @@ public class TabHandler {
         Labrow1.setFont(new Font("Tahoma", Font.BOLD, 30));
         Labrow1.setHorizontalAlignment(SwingConstants.CENTER);
         Labrow1.setText("Data Diri Penerima");
-        LabFoto.setPreferredSize(new Dimension(200, 200));
+        Labrow2.setPreferredSize(new Dimension(500, 70));
+        Labrow2.setFont(new Font("Tahoma", Font.BOLD, 30));
+        Labrow2.setHorizontalAlignment(SwingConstants.CENTER);
+        Labrow2.setText("Data Songket");
+        LabFoto.setPreferredSize(new Dimension(150, 170));
         LabNama.setPreferredSize(new Dimension(95, 30));
         LabNotlp.setPreferredSize(new Dimension(95, 30));
         LabAlamat.setPreferredSize(new Dimension(95, 30));
@@ -801,6 +927,7 @@ public class TabHandler {
 
         spinnerJumlah.setPreferredSize(new Dimension(150, 30));
 
+        gbcrow1.setInsets(5, 0, 0, 0);
         gbcrow1.setAnchor(GridBagConstraints.CENTER);
         gbcrow1.setWeightx(1.0);
         gbcrow1.setWeighty(0.5);
@@ -809,41 +936,53 @@ public class TabHandler {
         gbcrow1.setWeightx(1.0);
         gbcrow1.setWeighty(0.3);
         gbcrow1.setGridHeight(3);
+        // gbcrow1.setAnchor(GridBagConstraints.WEST);
+        gbcrow1.setInsets(5, 20, 10, 20);
         gbcrow1.addComponent(row1, LabFoto,0,1,1);
-        gbcrow1.setWeightx(0.5);
-        gbcrow1.setWeighty(0.1); 
+        // gbcrow1.setWeightx(0.5);
+        // gbcrow1.setWeighty(0.1); 
         gbcrow1.setGridHeight(1);
-        gbcrow1.addComponent(row1, rowrow,1,1 );
+        gbcrow1.setInsets(5, 0, 10, 0);
+        gbcrow1.addComponent(row1, rowrow,1,1, 2);
 
-        gbcrowrow.setFill(GridBagConstraints.BOTH);
+        // gbcrowrow.setFill(GridBagConstraints.WEST);
         gbcrowrow.setInsets(5,0,5,0);
         gbcrowrow.addComponent(rowrow, LabNama,0,1 );
-        gbcrowrow.addComponent(rowrow, TFNama,1,1, 2 );
+        gbcrowrow.addComponent(rowrow, TFNama,1,1, 3 );
         gbcrowrow.addComponent(rowrow, LabNotlp,0,2 );
-        gbcrowrow.addComponent(rowrow, TFNotlp,1,2, 2 );
+        gbcrowrow.addComponent(rowrow, TFNotlp,1,2, 3 );
         gbcrowrow.addComponent(rowrow, LabAlamat, 0, 3);
-        gbcrowrow.addComponent(rowrow, TFAlamat, 1, 3, 2);
+        gbcrowrow.addComponent(rowrow, TFAlamat, 1, 3, 3);
 
-        gbcrow2.setInsets(5, 100, 0, 100);
-        gbcrow2.addComponent(row2, LabEkspedisi, 0, 0 );
-        gbcrow2.addComponent(row2, ekspedisiCombo, 0, 1);
-        gbcrow2.addComponent(row2, LabSongket, 1, 0);
-        gbcrow2.addComponent(row2, songketCombo, 1, 1);
-        gbcrow2.addComponent(row2, LabWarna, 0, 2);
-        gbcrow2.addComponent(row2, warnaCombo, 0, 3);
-        gbcrow2.addComponent(row2, LabBahan, 1, 2);
-        gbcrow2.addComponent(row2, bahanCombo, 1, 3);
-        gbcrow2.addComponent(row2, LabJumlah, 0, 4);
-        gbcrow2.addComponent(row2, spinnerJumlah, 0, 5);
+        gbcrow2.setInsets(0, 100, 0, 100);
+        gbcrow2.setAnchor(GridBagConstraints.CENTER);
+        gbcrow2.setWeightx(1.0);
+        gbcrow2.setWeighty(0.5);
+        gbcrow2.setGridHeight(1);
+        gbcrow2.addComponent(row2, Labrow2, 0, 0, 3);
+        gbcrow2.setWeightx(0.5);
+        gbcrow2.setWeighty(0.1); 
+        gbcrow2.setGridHeight(1);
+        gbcrow2.addComponent(row2, LabEkspedisi, 0, 1, 1 );
+        gbcrow2.addComponent(row2, ekspedisiCombo, 0, 2);
+        gbcrow2.addComponent(row2, LabSongket, 1, 1);
+        gbcrow2.addComponent(row2, songketCombo, 1, 2);
+        gbcrow2.addComponent(row2, LabWarna, 0, 3);
+        gbcrow2.addComponent(row2, warnaCombo, 0, 4);
+        gbcrow2.addComponent(row2, LabBahan, 1, 3);
+        gbcrow2.addComponent(row2, bahanCombo, 1, 4);
+        gbcrow2.setInsets(0, 100, 10, 100);
+        gbcrow2.addComponent(row2, LabJumlah, 0, 5);
+        gbcrow2.addComponent(row2, spinnerJumlah, 0, 6);
 
-        gbcPenerima.setInsets(5, 10,20, 10);
+        gbcPenerima.setInsets(5, 10,10, 10);
         gbcPenerima.setFill(GridBagConstraints.BOTH );
         gbcPenerima.addComponent(panelPenerima, row1, 0, 0);
-        gbcPenerima.setInsets(20, 10,5, 10);
+        gbcPenerima.setInsets(10, 10,5, 10);
         gbcPenerima.addComponent(panelPenerima, row2, 0, 1);
 
         JPanel panelStok = new JPanel();
-        panelStok.setBackground(new Color(245, 176, 128));
+        panelStok.setBackground(new Color(b));
         panelStok.setLayout(new GridBagLayout());
         panelStok.setVisible(false);
 
@@ -861,7 +1000,7 @@ public class TabHandler {
 
         //-----------------------------------------------------------------------------------------
         JPanel PesananSaatIni = new JPanel();
-        PesananSaatIni.setBackground(new Color(249, 235, 199));
+        PesananSaatIni.setBackground(new Color(b));
         PesananSaatIni.setLayout(new GridBagLayout());
 
         LayoutHelper gbcPSI = new LayoutHelper();
@@ -874,10 +1013,13 @@ public class TabHandler {
 
         karyawanCombo.setPreferredSize(new Dimension(150, 30));
 
+        gbcPSI.setInsets(5, 0, 5, 30);
         gbcPSI.addComponent(PesananSaatIni, scrollPesananSaatIni, 0, 0);
         gbcPSI.addComponent(PesananSaatIni, karyawanCombo, 0, 1);
 
-        JPanel panelTombol = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        RoundedPanel panelTombol = new RoundedPanel(30);
+        panelTombol.setLayout(new FlowLayout(FlowLayout.CENTER));
+        panelTombol.setBackground(new Color(a));
         LayoutHelper gbcPTombol = new LayoutHelper(); 
 
         gbcPTombol.addComponent(panelTombol, butSimpan, 0, 1);
@@ -892,33 +1034,33 @@ public class TabHandler {
         JPanel panelPesanan = new JPanel();
         panelPesanan.setVisible(false);
         panelPesanan.setLayout(new GridBagLayout());
-        panelPesanan.setBackground(new Color(204, 255, 204));
+        panelPesanan.setBackground(new Color(b));
 
         JPanel panelButtonPesanan = new JPanel();
         panelButtonPesanan.setLayout(new FlowLayout(FlowLayout.CENTER,5 ,5));
         panelButtonPesanan.setPreferredSize(new Dimension(105, 105));
-        panelButtonPesanan.setOpaque(false);
-        panelButtonPesanan.setBackground(new Color(0,0,0, 60));
+        panelButtonPesanan.setBackground(new Color(c));
 
 
         LayoutHelper gbcPesanan = new LayoutHelper();
 
-        tabelPesanan.addMouseListener(new MouseAdapter(){
+        tabelPesananNoID.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleTableClick(e, tabelPesanan);
+                handleTableClick(e, tabelPesananNoID);
             }
         });
 
-        JScrollPane scrollPesanan = new JScrollPane(tabelPesanan);
-        tabelPesanan.setOpaque(false);
-        tabelPesanan.setBackground(new Color(0,0,0, 60));
+        JScrollPane scrollPesanan = new JScrollPane(tabelPesananNoID);
+        tabelPesananNoID.setOpaque(false);
+        tabelPesananNoID.setBackground(new Color(0,0,0, 60));
 
         panelButtonPesanan.add(butUbahPesanan);
         panelButtonPesanan.add(butHapusPesanan);
         panelButtonPesanan.add(butHapusSemua);
         panelButtonPesanan.add(butBatalPesanan);
 
+        gbcPesanan.setInsets(5, 0, 5, 30);
         gbcPesanan.addComponent(panelPesanan, scrollPesanan, 0, 0);
         gbcPesanan.addComponent(panelPesanan, panelButtonPesanan, 0, 1);
 
@@ -931,8 +1073,9 @@ public class TabHandler {
         tab.add(panelKananContainer, BorderLayout.EAST);
         
                 //-----------------------------------------------------------------------------------------
-        JPanel buttonPanel = new JPanel(new BorderLayout());
-        buttonPanel.setOpaque(false);
+        RoundedPanel buttonPanel = new RoundedPanel(60);
+        buttonPanel.setLayout(new BorderLayout());
+        buttonPanel.setBackground(new Color(c));
 
         JButton butStok = new JButton("Tabel Songket");
         butStok.addActionListener(e -> {
@@ -962,6 +1105,9 @@ public class TabHandler {
         JPanel jPanel1 = new JPanel();
         JPanel jPanel2 = new JPanel();
 
+        jPanel1.setBackground(new Color(b));
+        jPanel2.setBackground(new Color(b));
+        panel.setBackground(new Color(b));
         // Create components for jPanel1
         // JTextField TF = new JTextField();
         // JButton btnUbah = new JButton("Ubah");
@@ -979,6 +1125,11 @@ public class TabHandler {
         btnHapus.addActionListener(e -> {
             String pilih = (String) Combo.getSelectedItem();
             Hapus(pilih);
+        });
+
+        btnTambah.addActionListener(e -> {
+            String pilih = (String) Combo.getSelectedItem();
+            tambah(pilih);
         });
         
         // btnHapus.addActionListener(new ActionListener() {
@@ -1231,7 +1382,6 @@ public class TabHandler {
     }
 
     public boolean validasiInput() {
-        // Validasi input lain, misalnya JTextField kosong
         if (TFNama.getText().trim().isEmpty() || TFNotlp.getText().trim().isEmpty() || TFAlamat.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Tidak boleh ada field kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return false;
@@ -1240,7 +1390,6 @@ public class TabHandler {
     }
     
     public boolean validasiTabel() {
-        // Validasi tabel kosong
         if (tabelPesananSaatIni.getRowCount() == 0) {
             JOptionPane.showMessageDialog(null, "Tabel Pesanan masih kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return false;

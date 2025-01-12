@@ -17,6 +17,7 @@ public class LayoutHelper {
     public void addComponent(JPanel panel, JComponent component, int x, int y) {
         gbc.gridx = x;
         gbc.gridy = y;
+        gbc.gridwidth = 1;
         panel.add(component, gbc);
     }
 
